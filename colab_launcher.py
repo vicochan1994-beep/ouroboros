@@ -41,8 +41,15 @@ def ensure_claude_code_cli() -> bool:
     return has_cli
 
 # ----------------------------
-# 0.1) provide apply_patch shim
+# 0.1) provide apply_patch shim with local overwrite
 # ----------------------------
+import pathlib
+patch_file = pathlib.Path("ouroboros/apply_patch.py")
+if patch_file.exists():
+    t = patch_file.read_text()
+    t = t.replace('APPLY_PATCH_PATH = pathlib.Path("/usr/local/bin/apply_patch")', 'APPLY_PATCH_PATH = pathlib.Path("apply_patch")')
+    patch_file.write_text(t)
+
 from ouroboros.apply_patch import install as install_apply_patch
 from ouroboros.llm import DEFAULT_LIGHT_MODEL
 install_apply_patch()
